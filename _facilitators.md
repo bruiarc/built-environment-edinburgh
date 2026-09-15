@@ -1,7 +1,7 @@
 ---
 layout: page
-title: People
-permalink: /people/
+title: Facilitators
+permalink: /_facilitators/
 ---
 <!-- Members at `Built Environment Edinburgh` community! -->
 
