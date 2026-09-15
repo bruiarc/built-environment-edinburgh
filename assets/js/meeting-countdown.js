@@ -62,14 +62,14 @@ function updateMeetingDate() {
     minute: "2-digit",
     timeZone: meetingTimeZone
   };
-  const rawOffset = new Intl.DateTimeFormat("en-GB", {
-    timeZone: meetingTimeZone,
-    timeZoneName: "longOffset"
-  }).formatToParts(nextMeeting)
-    .find(part => part.type === "timeZoneName").value;
-  const offsetName = rawOffset === "GMT"
-    ? "UTC+0"
-    : rawOffset.replace(/^GMT([+-])0?(\d+):00$/, "UTC$1$2");
+  const meetingParts = getUKDateParts(nextMeeting);
+  const offsetHours = Math.round((Date.UTC(
+    meetingParts.year,
+    meetingParts.month - 1,
+    meetingParts.day,
+    meetingParts.hour
+  ) - nextMeeting.getTime()) / 3600000);
+  const offsetName = `UTC${offsetHours >= 0 ? "+" : ""}${offsetHours}`;
 
   document.getElementById("next-meeting-date").textContent =
     `on ${nextMeeting.toLocaleString("en-GB", dateOptions)} (${offsetName})`;
