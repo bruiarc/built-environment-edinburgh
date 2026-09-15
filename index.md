@@ -2,11 +2,22 @@
 layout: default
 title: Home
 ---
-Welcome to `Built Environment Edinburgh` community, a PhD student-led group at the *[University of Edinburgh](https://www.ed.ac.uk/)*{:.HL}, promoting research exchange in *sustainable and resilient built environments*{:.HL}, open to both internal and external participants. 
+Welcome to `Built Environment Edinburgh (BEE)` community, a PhD student-led group at the [University of Edinburgh](https://www.ed.ac.uk/), promoting research exchange in *sustainable and resilient built environments*, open to both internal and external participants. 
 
 <img src="image_logo.png" alt="alt text" style="width:100%;" />
 
+The [next meeting](mailto:rui.bo@ed.ac.uk?subject=Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20meeting%20.) will take place in:
 
+<div class="countdown-container">
+    <div class="countdown-display" id="meeting-countdown">
+        Loading countdown…
+    </div>
+    <div class="meeting-schedule"><span id="next-meeting-date">Loading next meeting date…</span>.</div>
+</div>
+
+<script defer src="{{ '/assets/js/meeting-countdown.js' | relative_url }}"></script>
+
+---
 **Basic Statistics**
 {% assign meeting_count = site.data.meeting | size %}
 {% assign phd_work_count = 0 %}
@@ -24,20 +35,6 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 - **{{ meeting_count }}** meetings/workshops co-created,<br>
 - **{{ phd_work_count }}** PhD works presented,<br>
 - **{{ participant_count }}** participants from **{{ institution_count }}** institutions.<br>
-
----
-**What's Next**
-
-The [next meeting](mailto:rui.bo@ed.ac.uk?subject=Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20meeting%20.) will take place in:
-
-<div class="countdown-container">
-    <div class="countdown-display" id="meeting-countdown">
-        Loading countdown…
-    </div>
-    <div class="meeting-schedule"><span id="next-meeting-date">Loading next meeting date…</span>.</div>
-</div>
-
-<script defer src="{{ '/assets/js/meeting-countdown.js' | relative_url }}"></script>
 
 
 ---
