@@ -4,19 +4,22 @@ description: >
   GitHub Page Powered by Jekyll
 
 # Required for GitHub Pages
+
 url: "https://ruibogithub.github.io"
 baseurl: "/built-environment-edinburgh"
 google_analytics: G-XXXXXXX
 markdown: kramdown
 theme: jekyll-theme-cayman
+include:
+  - _pages
 sass:
   style: expanded
 nav:
   - name: Home
-    link: /built-environment-edinburgh/
+    link: /
   - name: Projects
-    link: /built-environment-edinburgh/projects/
+    link: /projects/
   - name: Facilitators
-    link: /built-environment-edinburgh/facilitators/
+    link: /facilitators/
   - name: Resources
-    link: /built-environment-edinburgh/resources/
+    link: /resources/

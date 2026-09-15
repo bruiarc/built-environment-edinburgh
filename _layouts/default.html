@@ -84,7 +84,7 @@
 
       <nav>
         {% for item in site.nav %}
-          <a href="{{ item.link }}">{{ item.name }}</a>
+        <a href="{{ item.link | relative_url }}">{{ item.name }}</a>`
         {% endfor %}
       </nav>
     </header>
@@ -98,3 +98,4 @@
     </footer>
   </body>
 </html>
+`
