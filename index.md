@@ -11,7 +11,10 @@ Welcome to `Built Environment Edinburgh (BEE)` community, a PhD student-led grou
   <div class="bee-research-banner__keywords" aria-hidden="true">
     <div class="bee-research-banner__static">
       Built Environment <span>·</span> AI <span>·</span> BEM <span>·</span>
-      Bayesian Analysis <span>·</span> EV <span>·</span> Heat Pumps <span>·</span> Renewables
+      Bayesian Analysis <span>·</span> EV <span>·</span> Heat Pumps <span>·</span>
+      Renewables <span>·</span> Net Zero <span>·</span> Building Performance <span>·</span>
+      Energy Efficiency <span>·</span> Retrofit <span>·</span> Digital Twins <span>·</span>
+      Urban Resilience <span>·</span> Indoor Environment
     </div>
     <div class="bee-research-banner__animation"></div>
     <p class="bee-research-banner__identity">Built Environment Edinburgh</p>
