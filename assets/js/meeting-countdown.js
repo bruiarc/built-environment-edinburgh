@@ -81,8 +81,7 @@ function makeUKDate(year, month, day, hour) {
   return new Date(utcGuess.getTime() - offset);
 }
 
-function getNextMeetingDate() {
-  const now = new Date();
+function getNextMeetingDate(now = new Date()) {
   const ukNow = getUKDateParts(now);
   let year = ukNow.year;
   let month = ukNow.month - 1;

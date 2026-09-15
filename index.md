@@ -6,15 +6,23 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 
 <img src="image_logo.png" alt="alt text" style="width:100%;" />
 
-So far, we have:
+---
+**Basic Statistics**
 {% assign meeting_count = site.data.meeting | size %}
+{% assign phd_work_count = 0 %}
+{% for meeting in site.data.meeting %}
+  {% assign topic = meeting.topic | default: "" | strip %}
+  {% if topic != "" %}
+    {% assign phd_work_count = phd_work_count | plus: 1 %}
+  {% endif %}
+{% endfor %}
 {% assign participant_count = 0 %}
 {% for row in site.data.participants %}
   {% assign participant_count = participant_count | plus: row.participants %}
 {% endfor %}
 {% assign institution_count = site.data.participants | map: "institution" | uniq | size %}
 - **{{ meeting_count }}** meetings/workshops co-created,<br>
-- **4** PhD works presented,<br>
+- **{{ phd_work_count }}** PhD works presented,<br>
 - **{{ participant_count }}** participants from **{{ institution_count }}** institutions.<br>
 
 Next meeting will take place in:
