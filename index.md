@@ -6,7 +6,7 @@ Welcome to `Built Environment Edinburgh (BEE)` community, a PhD student-led grou
 
 <img src="image_logo.png" alt="alt text" style="width:100%;" />
 
-The [next meeting](mailto:rui.bo@ed.ac.uk?subject=Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20meeting%20.) will take place in:
+The [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20next%20BEE%20meeting%20.) will take place in:
 
 <div class="countdown-container">
     <div class="countdown-display" id="meeting-countdown">
