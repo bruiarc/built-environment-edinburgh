@@ -1,10 +1,10 @@
 ---
 layout: default
-title: Projects
-permalink: /projects/
+title: Talks
+permalink: /talks/
 ---
 
-<!-- **Projects at `Built Environment Edinburgh` community!** -->
+<!-- **Talks at `Built Environment Edinburgh` community!** -->
 ### 2026-08: An occupancy centric control application for the built environment
 * Abstract: NA
 
