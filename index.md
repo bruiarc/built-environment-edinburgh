@@ -27,15 +27,14 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 
 ---
 **What's Next**
+
 The [next meeting](mailto:rui.bo@ed.ac.uk?subject=Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20meeting%20.) will take place in:
 
 <div class="countdown-container">
     <div class="countdown-display" id="meeting-countdown">
         Loading countdown…
     </div>
-    <div class="meeting-schedule" id="next-meeting-date">
-        Loading next meeting date…
-    </div>
+    <div class="meeting-schedule"><span id="next-meeting-date">Loading next meeting date…</span>.</div>
 </div>
 
 <script defer src="{{ '/assets/js/meeting-countdown.js' | relative_url }}"></script>
