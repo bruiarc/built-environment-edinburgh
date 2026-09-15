@@ -1,182 +1,170 @@
-<div id="map" style="height: 550px; margin-bottom:25px;"></div>
+{% comment %}
+Self-contained audience map. Jekyll loads _data/participants.csv at build time.
+Rows at identical coordinates are grouped into one city marker.
+{% endcomment %}
+{% assign city_groups = site.data.participants | group_by_exp: "row", "row.city | append: '|' | append: row.latitude | append: ',' | append: row.longitude" %}
 
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<section class="audience-map" aria-labelledby="audience-map-heading">
+  <h3 id="audience-map-heading">Audience locations</h3>
+  <p class="audience-map-intro">
+    Dot size represents each city’s total. Institution label size represents its participant count.
+    Select a dot to jump to full text details.
+  </p>
 
-<script>
-var map = L.map('map').setView([30, 0], 2);
+  <div class="audience-map-frame" tabindex="0" aria-label="Scrollable audience map">
+    <svg class="audience-map-svg" viewBox="0 0 360 180" role="img"
+         aria-labelledby="audience-map-title audience-map-description">
+      <title id="audience-map-title">World map of audience locations</title>
+      <desc id="audience-map-description">
+        Static world map with proportional, keyboard-accessible city markers and institution labels.
+        A complete text list follows the map.
+      </desc>
 
-// White background for oceans - using a simple tile layer with white background
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '©OpenStreetMap, ©CartoDB',
-    noWrap: true
-}).addTo(map);
+      <rect class="map-ocean" width="360" height="180" rx="3" />
+      <g class="map-graticule" aria-hidden="true">
+        <path d="M0 30H360M0 60H360M0 90H360M0 120H360M0 150H360" />
+        <path d="M60 0V180M120 0V180M180 0V180M240 0V180M300 0V180" />
+      </g>
 
-// Load world countries GeoJSON
-fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-  .then(response => response.json())
-  .then(worldData => {
-    
-    // Participant data is loaded by Jekyll from _data/participants.csv.
-    Promise.resolve({{ site.data.participants | jsonify }})
-      .then(rows => {
-        const countryParticipants = {};
-        const cityData = [];
-        
-        rows.forEach(row => {
-          const participantsCount = Number(row.participants);
-          const country = row.country.trim();
-          
-          // Aggregate by country
-          countryParticipants[country] = (countryParticipants[country] || 0) + participantsCount;
-          
-          // Store city data
-          cityData.push({
-            country,
-            city: row.city.trim(),
-            institution: row.institution.trim(),
-            lat: Number(row.latitude),
-            lon: Number(row.longitude),
-            participants: participantsCount
-          });
-        });
+      <!-- Simplified equirectangular world silhouette. -->
+      <g class="map-land" aria-hidden="true">
+        <path d="M8 33L20 22 43 15 65 17 82 27 100 29 111 39 105 51 94 55 87 69 73 72 62 65 51 60 42 68 28 62 18 51 8 45Z" />
+        <path d="M105 18L119 8 139 10 148 19 142 31 126 36 112 30Z" />
+        <path d="M91 75L105 79 116 91 117 106 109 121 101 139 92 150 86 133 82 113 75 96 78 83Z" />
+        <path d="M164 40L178 34 195 36 207 43 202 51 187 52 178 48 169 54 158 50Z" />
+        <path d="M169 57L187 51 203 59 211 76 207 96 197 116 183 125 171 112 166 91 155 76 158 63Z" />
+        <path d="M199 38L221 27 250 24 278 30 303 42 327 49 345 62 337 75 319 78 306 70 290 76 275 69 259 72 248 63 232 66 219 55 203 53Z" />
+        <path d="M236 66L250 70 258 83 250 96 240 88 231 75Z" />
+        <path d="M276 78L287 84 292 97 284 105 277 94Z" />
+        <path d="M310 119L326 109 346 114 355 128 347 140 329 143 313 136 302 126Z" />
+        <path d="M353 102L359 99 358 112 353 115Z" />
+        <path d="M0 164L40 158 83 161 122 157 164 162 207 158 250 162 294 157 332 160 360 156V180H0Z" />
+        <circle cx="176.8" cy="34.1" r="1.8" />
+        <path d="M316 56L319 61 317 69 314 64Z" />
+      </g>
 
-        // Style countries based on participation
-        function styleCountry(feature) {
-          const countryName = feature.properties.name;
-          const hasParticipants = countryParticipants[countryName] > 0;
-          
-          return {
-            fillColor: hasParticipants ? 
-              getColorByCount(countryParticipants[countryName]) : 
-              '#e0e0e0', // Grey for non-participating countries
-            weight: 1,
-            opacity: 1,
-            color: hasParticipants ? '#666' : '#ccc',
-            fillOpacity: hasParticipants ? 0.8 : 0.4,
-            className: 'country-boundary'
-          };
-        }
+      <g class="map-markers">
+        {% for city in city_groups %}
+          {% assign first = city.items | first %}
+          {% assign city_total = 0 %}
+          {% capture institution_names %}{% for row in city.items %}{% unless forloop.first %}; {% endunless %}{{ row.institution }} ({{ row.participants }}){% endfor %}{% endcapture %}
+          {% for row in city.items %}{% assign city_total = city_total | plus: row.participants %}{% endfor %}
+          {% assign marker_x = first.longitude | plus: 180 %}
+          {% assign marker_y = first.latitude | times: -1 | plus: 90 %}
+          {% assign marker_radius = city_total | times: 0.65 | plus: 3.35 %}
+          {% assign city_id = first.city | append: '-' | append: first.country | slugify | prepend: 'audience-' %}
+          {% assign side = forloop.index0 | modulo: 2 %}
+          {% assign label_x = marker_radius | plus: 4 %}
+          {% assign label_anchor = 'start' %}
+          {% if side == 1 or marker_x > 285 %}
+            {% assign label_x = marker_radius | plus: 4 | times: -1 %}
+            {% assign label_anchor = 'end' %}
+          {% endif %}
 
-        // Color scale for participating countries
-        function getColorByCount(count) {
-          if (count >= 5) return '#1976d2'; // Dark blue for high participation
-          if (count >= 2) return '#42a5f5'; // Medium blue
-          return '#90caf9'; // Light blue for single participants
-        }
+          <a class="city-marker" href="#{{ city_id }}"
+             transform="translate({{ marker_x }},{{ marker_y }})"
+             aria-label="{{ first.city | escape }}, {{ first.country | escape }}: {{ city_total }} participants. Institutions: {{ institution_names | strip | escape }}">
+            <title>{{ first.city | escape }}, {{ first.country | escape }} — {{ city_total }} participants</title>
+            <desc>Institutions: {{ institution_names | strip | escape }}</desc>
+            <circle class="city-marker-halo" r="{{ marker_radius | plus: 2 }}" />
+            <circle class="city-marker-dot" r="{{ marker_radius }}" />
+            <g class="institution-cloud" aria-hidden="true" text-anchor="{{ label_anchor }}">
+              <text class="city-label" x="{{ label_x }}" y="-4">{{ first.city | escape }}</text>
+              {% for row in city.items %}
+                {% assign label_y = forloop.index0 | times: 7 | plus: 3 %}
+                {% assign label_size = row.participants | times: 0.42 | plus: 4.8 %}
+                <text class="institution-label" x="{{ label_x }}" y="{{ label_y }}"
+                      style="font-size:{{ label_size }}px">{{ row.institution | escape }}</text>
+              {% endfor %}
+            </g>
+          </a>
+        {% endfor %}
+      </g>
+    </svg>
+  </div>
 
-        // Add countries to map
-        L.geoJSON(worldData, {
-          style: styleCountry,
-          onEachFeature: function(feature, layer) {
-            const countryName = feature.properties.name;
-            const count = countryParticipants[countryName] || 0;
-            if (count > 0) {
-              layer.bindTooltip(`${countryName}: ${count} participants`, {
-                permanent: false,
-                direction: 'auto'
-              });
-            }
-          }
-        }).addTo(map);
-
-        // Add city circles with institution details
-        cityData.forEach(data => {
-          const radius = Math.sqrt(data.participants) * 80000; // Scale factor for visibility
-          
-          const circle = L.circle([data.lat, data.lon], {
-            radius: radius,
-            fillColor: '#ff6b35',
-            color: '#e64a19',
-            weight: 2,
-            fillOpacity: 0.6
-          }).addTo(map);
-          
-          // Create detailed popup content
-          const popupContent = `
-            <div style="min-width: 200px;">
-              <h4 style="margin: 0 0 8px 0; color: #333;">${data.city}, ${data.country}</h4>
-              <hr style="margin: 8px 0;">
-              <p style="margin: 4px 0;"><strong>Institution:</strong> ${data.institution}</p>
-              <p style="margin: 4px 0;"><strong>Participants:</strong> ${data.participants}</p>
-              <div style="display: flex; align-items: center; margin-top: 8px;">
-                <div style="width: 12px; height: 12px; background: #ff6b35; border-radius: 50%; margin-right: 8px;"></div>
-                <span style="font-size: 12px; color: #666;">Circle size represents participant count</span>
-              </div>
-            </div>
-          `;
-          
-          circle.bindPopup(popupContent);
-          
-          // Add tooltip on hover
-          circle.bindTooltip(`
-            <strong>${data.city}</strong><br>
-            ${data.institution}<br>
-            ${data.participants} participant${data.participants > 1 ? 's' : ''}
-          `);
-        });
-
-        // Add legend
-        const legend = L.control({ position: 'bottomright' });
-        legend.onAdd = function(map) {
-          const div = L.DomUtil.create('div', 'info legend');
-          div.style.backgroundColor = 'white';
-          div.style.padding = '10px';
-          div.style.borderRadius = '5px';
-          div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
-          
-          div.innerHTML = `
-            <h4 style="margin: 0 0 8px 0;">Participants</h4>
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #90caf9; border-radius: 50%; margin-right: 8px;"></div>
-              <span>1 participant</span>
-            </div>
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #42a5f5; border-radius: 50%; margin-right: 8px;"></div>
-              <span>2-4 participants</span>
-            </div>
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #1976d2; border-radius: 50%; margin-right: 8px;"></div>
-              <span>5+ participants</span>
-            </div>
-            <hr style="margin: 8px 0;">
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #e0e0e0; border-radius: 50%; margin-right: 8px;"></div>
-              <span>No participants</span>
-            </div>
-          `;
-          return div;
-        };
-        legend.addTo(map);
-
-      });
-  })
-  .catch(error => console.error('Error loading map data:', error));
-</script>
+  <div class="audience-location-list" aria-labelledby="audience-list-heading">
+    <h4 id="audience-list-heading">Locations and institutions</h4>
+    <ul>
+      {% for city in city_groups %}
+        {% assign first = city.items | first %}
+        {% assign city_total = 0 %}
+        {% for row in city.items %}{% assign city_total = city_total | plus: row.participants %}{% endfor %}
+        {% assign city_id = first.city | append: '-' | append: first.country | slugify | prepend: 'audience-' %}
+        <li id="{{ city_id }}" tabindex="-1">
+          <strong>{{ first.city | escape }}, {{ first.country | escape }}</strong>
+          — {{ city_total }} participant{% unless city_total == 1 %}s{% endunless %}
+          <ul>
+            {% for row in city.items %}
+              <li>{{ row.institution | escape }}: {{ row.participants | escape }}</li>
+            {% endfor %}
+          </ul>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+</section>
 
 <style>
-.country-boundary {
-  pointer-events: auto;
-}
-
-.legend {
-  line-height: 18px;
-  color: #555;
-}
-.legend i {
-  width: 18px;
-  height: 18px;
-  float: left;
-  margin-right: 8px;
-  opacity: 0.7;
-}
-
-/* Ensure map background is white */
-#map {
-  background: white;
-}
+  .audience-map { margin: 1rem 0 2rem; }
+  .audience-map h3, .audience-map h4 { margin-bottom: 0.35rem; }
+  .audience-map-intro { color: #555; font-size: 0.95rem; margin: 0 0 0.75rem; }
+  .audience-map-frame {
+    background: #f7fafc;
+    border: 1px solid #d8e0e7;
+    border-radius: 7px;
+    overflow-x: auto;
+  }
+  .audience-map-frame:focus { outline: 2px solid #4a6fa5; outline-offset: 2px; }
+  .audience-map-svg { display: block; height: auto; min-width: 680px; width: 100%; }
+  .map-ocean { fill: #f7fafc; }
+  .map-graticule { fill: none; stroke: #dce7ee; stroke-width: 0.45; }
+  .map-land { fill: #d9e1df; stroke: #aebcb9; stroke-linejoin: round; stroke-width: 0.65; }
+  .city-marker { color: #c64f2c; cursor: pointer; outline: none; }
+  .city-marker-halo { fill: #fff; fill-opacity: 0.82; }
+  .city-marker-dot {
+    fill: currentColor;
+    fill-opacity: 0.82;
+    stroke: #8f321b;
+    stroke-width: 0.8;
+    vector-effect: non-scaling-stroke;
+  }
+  .city-label, .institution-label {
+    fill: #263238;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    paint-order: stroke;
+    stroke: #fff;
+    stroke-linejoin: round;
+    stroke-width: 2px;
+  }
+  .city-label { font-size: 5.4px; font-weight: 700; }
+  .institution-label { font-weight: 600; }
+  .city-marker:hover .city-marker-dot, .city-marker:focus .city-marker-dot {
+    fill-opacity: 1;
+    stroke: #111;
+    stroke-width: 1.8;
+  }
+  .city-marker:focus .city-marker-halo { fill: #fff4a8; fill-opacity: 1; }
+  .city-marker:hover .institution-cloud, .city-marker:focus .institution-cloud {
+    filter: drop-shadow(0 0 1px #fff);
+  }
+  .audience-location-list {
+    background: #fafafa;
+    border-left: 3px solid #d8e0e7;
+    margin-top: 1rem;
+    padding: 0.6rem 1rem;
+  }
+  .audience-location-list > ul { columns: 2 18rem; margin-bottom: 0; }
+  .audience-location-list > ul > li { break-inside: avoid; margin-bottom: 0.7rem; }
+  .audience-location-list li:target, .audience-location-list li:focus {
+    background: #fff4a8;
+    outline: 2px solid #d6a800;
+    outline-offset: 2px;
+  }
+  @media (min-width: 760px) {
+    .audience-map-svg { min-width: 0; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .audience-map-frame { scroll-behavior: auto; }
+  }
 </style>
-
-
-
