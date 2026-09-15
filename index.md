@@ -10,7 +10,7 @@ Welcome to `Built Environment Edinburgh (BEE)` community, a PhD student-led grou
   </div>
   <div class="bee-research-banner__keywords" aria-hidden="true">
     <div class="bee-research-banner__static">
-      Built Environment <span>·</span> BEM <span>·</span> EV <span>·</span> Renewables <span>·</span>
+      Energy Modelling <span>·</span> Heat Pumps <span>·</span> EV <span>·</span> Renewables <span>·</span>
       AI <span>·</span> Digital Twins <span>·</span> Urban Environment <span>·</span>
       Smart Grid <span>·</span> Indoor Environment <span>·</span> Energy Systems
     </div>
