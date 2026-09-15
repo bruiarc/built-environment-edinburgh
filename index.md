@@ -6,7 +6,7 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 
 <img src="image_logo.png" alt="alt text" style="width:100%;" />
 
----
+
 **Basic Statistics**
 {% assign meeting_count = site.data.meeting | size %}
 {% assign phd_work_count = 0 %}
@@ -24,7 +24,8 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 - **{{ meeting_count }}** meetings/workshops co-created,<br>
 - **{{ phd_work_count }}** PhD works presented,<br>
 - **{{ participant_count }}** participants from **{{ institution_count }}** institutions.<br>
-
+---
+**What's Next**
 Next meeting will take place in:
 <div class="countdown-container">
     <div class="countdown-display" id="meeting-countdown">
