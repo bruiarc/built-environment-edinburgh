@@ -15,12 +15,17 @@ body {
 }
 
 a {
-  color: #6b7280;   /* soft grey */
+  color: #3f6491;
   text-decoration: none;
 }
 
 a:hover {
-  color: #4a6fa5;   /* slightly darker on hover */
+  color: #294f7d;
+}
+
+a:focus-visible {
+  outline: 2px solid #5f7fa5;
+  outline-offset: 2px;
 }
 
 /* NAV BAR */
@@ -44,13 +49,13 @@ a:hover {
 
 .nav a {
   text-decoration: none;
-  color: rgba(0, 0, 0, 0.7);
+  color: #3f6491;
   font-weight: 500;
 }
 
 .nav a:hover {
-  color: black;
-  text-decoration: underline;
+  color: #294f7d;
+  text-decoration: none;
 }
 
 /* CONTENT */
@@ -140,7 +145,7 @@ h1, h2, h3 {
 }
 
 .bee-research-banner__keyword {
-  color: rgba(0, 0, 0, 0.68);
+  color: rgba(0, 0, 0, 0.82);
   font-size: var(--keyword-size, 2rem);
   font-weight: 500;
   left: 0;
@@ -148,7 +153,7 @@ h1, h2, h3 {
   opacity: 0;
   position: absolute;
   top: 0;
-  transition: opacity 0.325s ease-in-out;
+  transition: opacity 0.49s ease-in-out;
   white-space: nowrap;
 }
 
@@ -167,7 +172,7 @@ h1, h2, h3 {
 }
 
 .bee-research-banner__keyword.is-visible {
-  opacity: 1;
+  opacity: var(--keyword-opacity, 0.9);
 }
 
 @media (max-width: 560px) {
@@ -190,7 +195,7 @@ h1, h2, h3 {
   }
 
   .bee-research-banner__keyword {
-    font-size: min(var(--keyword-size, 2.5rem), 2.5rem);
+    font-size: min(var(--keyword-size, 1.75rem), 1.75rem);
   }
 
   .bee-research-banner__identity {
