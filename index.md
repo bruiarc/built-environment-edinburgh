@@ -27,7 +27,7 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 
 ---
 **What's Next**
-The [next meeting](mailto:rui.bo@ed.ac.uk?subject=Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20meeting%20.) would be at:
+The [next meeting](mailto:rui.bo@ed.ac.uk?subject=Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20meeting%20.) will take place in:
 
 <div class="countdown-container">
     <div class="countdown-display" id="meeting-countdown">
