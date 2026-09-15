@@ -19,4 +19,4 @@ permalink: /projects/
 
 
 
-- **More to come ...**
+### More to come ...

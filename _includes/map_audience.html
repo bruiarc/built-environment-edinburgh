@@ -1,171 +1,325 @@
-<div id="map" style="height: 550px; margin-bottom:25px;"></div>
+{% comment %}
+Lightweight participant map. Jekyll embeds _data/participants.csv at build time;
+the browser makes no tile, GeoJSON, or participant-data requests.
+{% endcomment %}
 
-<!-- Leaflet -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<figure class="participant-map" aria-labelledby="participant-map-caption">
+  <div class="participant-map__canvas">
+    <svg class="participant-map__svg" viewBox="0 0 1000 500" role="img"
+         aria-labelledby="participant-map-title participant-map-description">
+      <title id="participant-map-title">Participant institutions around the world</title>
+      <desc id="participant-map-description">
+        A dotted world map with red circles sized by participant count.
+        Focus, hover over, or select a circle for institution details.
+      </desc>
+
+      <defs>
+        <pattern id="participant-land-dots" width="6" height="6"
+                 patternUnits="userSpaceOnUse">
+          <circle cx="1.5" cy="1.5" r="1.15" fill="#353535" />
+        </pattern>
+      </defs>
+
+      <rect class="participant-map__background" width="1000" height="500" rx="4" />
+
+      <g class="participant-map__land" aria-hidden="true"
+         transform="scale(2.7777778)">
+        <path d="M8 33L20 22 43 15 65 17 82 27 100 29 111 39 105 51 94 55 87 69 73 72 62 65 51 60 42 68 28 62 18 51 8 45Z" />
+        <path d="M105 18L119 8 139 10 148 19 142 31 126 36 112 30Z" />
+        <path d="M91 75L105 79 116 91 117 106 109 121 101 139 92 150 86 133 82 113 75 96 78 83Z" />
+        <path d="M164 40L178 34 195 36 207 43 202 51 187 52 178 48 169 54 158 50Z" />
+        <path d="M169 57L187 51 203 59 211 76 207 96 197 116 183 125 171 112 166 91 155 76 158 63Z" />
+        <path d="M199 38L221 27 250 24 278 30 303 42 327 49 345 62 337 75 319 78 306 70 290 76 275 69 259 72 248 63 232 66 219 55 203 53Z" />
+        <path d="M236 66L250 70 258 83 250 96 240 88 231 75Z" />
+        <path d="M276 78L287 84 292 97 284 105 277 94Z" />
+        <path d="M310 119L326 109 346 114 355 128 347 140 329 143 313 136 302 126Z" />
+        <path d="M353 102L359 99 358 112 353 115Z" />
+        <path d="M0 164L40 158 83 161 122 157 164 162 207 158 250 162 294 157 332 160 360 156V180H0Z" />
+        <circle cx="176.8" cy="34.1" r="1.8" />
+        <path d="M316 56L319 61 317 69 314 64Z" />
+      </g>
+
+      <g class="participant-map__leaders" aria-hidden="true"></g>
+      <g class="participant-map__markers"></g>
+    </svg>
+
+    <div class="participant-map__tooltip" role="status" aria-live="polite" hidden>
+      <strong class="participant-map__tooltip-institution"></strong>
+      <span class="participant-map__tooltip-place"></span>
+      <span class="participant-map__tooltip-count"></span>
+    </div>
+  </div>
+
+  <figcaption id="participant-map-caption">
+    Circle area represents participant count.
+  </figcaption>
+</figure>
 
 <script>
-var map = L.map('map').setView([30, 0], 2);
+(() => {
+  const data = [
+    {% for row in site.data.participants %}{
+      country: {{ row.country | jsonify }},
+      city: {{ row.city | jsonify }},
+      institution: {{ row.institution | jsonify }},
+      latitude: {{ row.latitude | plus: 0 }},
+      longitude: {{ row.longitude | plus: 0 }},
+      participants: {{ row.participants | plus: 0 }}
+    }{% unless forloop.last %},{% endunless %}{% endfor %}
+  ];
 
-// White background for oceans - using a simple tile layer with white background
-L.tileLayer('https://{s}.basemaps.cartocdn.com/light_nolabels/{z}/{x}/{y}{r}.png', {
-    attribution: '©OpenStreetMap, ©CartoDB',
-    noWrap: true
-}).addTo(map);
+  const container = document.querySelector(".participant-map__canvas");
+  if (!container) return;
 
-// Load world countries GeoJSON
-fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
-  .then(response => response.json())
-  .then(worldData => {
+  const svg = container.querySelector(".participant-map__svg");
+  const markerLayer = svg.querySelector(".participant-map__markers");
+  const leaderLayer = svg.querySelector(".participant-map__leaders");
+  const tooltip = container.querySelector(".participant-map__tooltip");
+  const institutionText = tooltip.querySelector(".participant-map__tooltip-institution");
+  const placeText = tooltip.querySelector(".participant-map__tooltip-place");
+  const countText = tooltip.querySelector(".participant-map__tooltip-count");
+  const svgNS = "http://www.w3.org/2000/svg";
+  const placed = [];
+  let selectedMarker = null;
 
-    // Participant data is embedded from _data/participants.csv at build time.
-    const cityData = [
-      {% for row in site.data.participants %}{
-        country: {{ row.country | jsonify }},
-        city: {{ row.city | jsonify }},
-        institution: {{ row.institution | jsonify }},
-        lat: {{ row.latitude | plus: 0 }},
-        lon: {{ row.longitude | plus: 0 }},
-        participants: {{ row.participants | plus: 0 }}
-      }{% unless forloop.last %},{% endunless %}{% endfor %}
-    ];
-    const countryParticipants = {};
+  const project = ({ longitude, latitude }) => ({
+    x: (longitude + 180) / 360 * 1000,
+    y: (90 - latitude) / 180 * 500
+  });
 
-    cityData.forEach(data => {
-      countryParticipants[data.country] =
-        (countryParticipants[data.country] || 0) + data.participants;
+  function findPosition(base, radius) {
+    const clearance = 4;
+    const available = candidate => placed.every(marker =>
+      Math.hypot(candidate.x - marker.x, candidate.y - marker.y) >=
+        radius + marker.radius + clearance
+    );
+
+    if (available(base)) return base;
+
+    for (let distance = 8; distance <= 34; distance += 4) {
+      for (let angle = 0; angle < 360; angle += 30) {
+        const radians = angle * Math.PI / 180;
+        const candidate = {
+          x: base.x + Math.cos(radians) * distance,
+          y: base.y + Math.sin(radians) * distance
+        };
+        if (available(candidate)) return candidate;
+      }
+    }
+    return base;
+  }
+
+  function tooltipPosition(marker) {
+    const svgBox = svg.getBoundingClientRect();
+    return {
+      x: (marker.cx.baseVal.value / 1000) * svgBox.width,
+      y: (marker.cy.baseVal.value / 500) * svgBox.height
+    };
+  }
+
+  function showTooltip(marker, datum, pointer) {
+    institutionText.textContent = datum.institution;
+    placeText.textContent = `${datum.city}, ${datum.country}`;
+    countText.textContent =
+      `${datum.participants} participant${datum.participants === 1 ? "" : "s"}`;
+    tooltip.hidden = false;
+
+    const point = pointer || tooltipPosition(marker);
+    const canvasBox = container.getBoundingClientRect();
+    const tooltipBox = tooltip.getBoundingClientRect();
+    let left = point.x + 14;
+    let top = point.y - tooltipBox.height - 12;
+
+    if (left + tooltipBox.width > canvasBox.width - 8) {
+      left = point.x - tooltipBox.width - 14;
+    }
+    if (top < 8) top = point.y + 14;
+
+    tooltip.style.left = `${Math.max(8, left)}px`;
+    tooltip.style.top = `${top}px`;
+  }
+
+  function hideTooltip(marker) {
+    if (selectedMarker && selectedMarker !== marker) return;
+    if (!selectedMarker) tooltip.hidden = true;
+  }
+
+  [...data]
+    .sort((a, b) => b.participants - a.participants)
+    .forEach(datum => {
+      const base = project(datum);
+      const radius = 6 * Math.sqrt(datum.participants);
+      const point = findPosition(base, radius);
+      placed.push({ ...point, radius });
+
+      if (Math.hypot(point.x - base.x, point.y - base.y) > 1) {
+        const leader = document.createElementNS(svgNS, "line");
+        leader.setAttribute("x1", base.x);
+        leader.setAttribute("y1", base.y);
+        leader.setAttribute("x2", point.x);
+        leader.setAttribute("y2", point.y);
+        leaderLayer.appendChild(leader);
+      }
+
+      const marker = document.createElementNS(svgNS, "circle");
+      marker.setAttribute("class", "participant-map__marker");
+      marker.setAttribute("cx", point.x);
+      marker.setAttribute("cy", point.y);
+      marker.setAttribute("r", radius);
+      marker.setAttribute("tabindex", "0");
+      marker.setAttribute("role", "button");
+      marker.setAttribute("aria-label",
+        `${datum.institution}, ${datum.city}, ${datum.country}: ${datum.participants} participant${datum.participants === 1 ? "" : "s"}`
+      );
+
+      marker.addEventListener("pointerenter", event => {
+        showTooltip(marker, datum, { x: event.clientX - container.getBoundingClientRect().left,
+                                    y: event.clientY - container.getBoundingClientRect().top });
+      });
+      marker.addEventListener("pointermove", event => {
+        if (event.pointerType !== "touch") {
+          showTooltip(marker, datum, { x: event.clientX - container.getBoundingClientRect().left,
+                                      y: event.clientY - container.getBoundingClientRect().top });
+        }
+      });
+      marker.addEventListener("pointerleave", () => hideTooltip(marker));
+      marker.addEventListener("focus", () => showTooltip(marker, datum));
+      marker.addEventListener("blur", () => {
+        if (selectedMarker === marker) selectedMarker = null;
+        hideTooltip(marker);
+      });
+      marker.addEventListener("click", event => {
+        event.stopPropagation();
+        if (selectedMarker === marker) {
+          selectedMarker = null;
+          tooltip.hidden = true;
+        } else {
+          selectedMarker = marker;
+          showTooltip(marker, datum);
+        }
+      });
+      marker.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          selectedMarker = null;
+          tooltip.hidden = true;
+          marker.blur();
+        }
+      });
+
+      markerLayer.appendChild(marker);
     });
 
-        // Style countries based on participation
-        function styleCountry(feature) {
-          const countryName = feature.properties.name;
-          const hasParticipants = countryParticipants[countryName] > 0;
-
-          return {
-            fillColor: hasParticipants ?
-              getColorByCount(countryParticipants[countryName]) :
-              '#e0e0e0', // Grey for non-participating countries
-            weight: 1,
-            opacity: 1,
-            color: hasParticipants ? '#666' : '#ccc',
-            fillOpacity: hasParticipants ? 0.8 : 0.4,
-            className: 'country-boundary'
-          };
-        }
-
-        // Color scale for participating countries
-        function getColorByCount(count) {
-          if (count >= 5) return '#1976d2'; // Dark blue for high participation
-          if (count >= 2) return '#42a5f5'; // Medium blue
-          return '#90caf9'; // Light blue for single participants
-        }
-
-        // Add countries to map
-        L.geoJSON(worldData, {
-          style: styleCountry,
-          onEachFeature: function(feature, layer) {
-            const countryName = feature.properties.name;
-            const count = countryParticipants[countryName] || 0;
-            if (count > 0) {
-              layer.bindTooltip(`${countryName}: ${count} participants`, {
-                permanent: false,
-                direction: 'auto'
-              });
-            }
-          }
-        }).addTo(map);
-
-        // Add city circles with institution details
-        cityData.forEach(data => {
-          const radius = Math.sqrt(data.participants) * 80000; // Scale factor for visibility
-
-          const circle = L.circle([data.lat, data.lon], {
-            radius: radius,
-            fillColor: '#ff6b35',
-            color: '#e64a19',
-            weight: 2,
-            fillOpacity: 0.6
-          }).addTo(map);
-
-          // Create detailed popup content
-          const popupContent = `
-            <div style="min-width: 200px;">
-              <h4 style="margin: 0 0 8px 0; color: #333;">${data.city}, ${data.country}</h4>
-              <hr style="margin: 8px 0;">
-              <p style="margin: 4px 0;"><strong>Institution:</strong> ${data.institution}</p>
-              <p style="margin: 4px 0;"><strong>Participants:</strong> ${data.participants}</p>
-              <div style="display: flex; align-items: center; margin-top: 8px;">
-                <div style="width: 12px; height: 12px; background: #ff6b35; border-radius: 50%; margin-right: 8px;"></div>
-                <span style="font-size: 12px; color: #666;">Circle size represents participant count</span>
-              </div>
-            </div>
-          `;
-
-          circle.bindPopup(popupContent);
-
-          // Add tooltip on hover
-          circle.bindTooltip(`
-            <strong>${data.city}</strong><br>
-            ${data.institution}<br>
-            ${data.participants} participant${data.participants > 1 ? 's' : ''}
-          `);
-        });
-
-        // Add legend
-        const legend = L.control({ position: 'bottomright' });
-        legend.onAdd = function(map) {
-          const div = L.DomUtil.create('div', 'info legend');
-          div.style.backgroundColor = 'white';
-          div.style.padding = '10px';
-          div.style.borderRadius = '5px';
-          div.style.boxShadow = '0 0 15px rgba(0,0,0,0.2)';
-
-          div.innerHTML = `
-            <h4 style="margin: 0 0 8px 0;">Participants</h4>
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #90caf9; border-radius: 50%; margin-right: 8px;"></div>
-              <span>1 participant</span>
-            </div>
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #42a5f5; border-radius: 50%; margin-right: 8px;"></div>
-              <span>2-4 participants</span>
-            </div>
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #1976d2; border-radius: 50%; margin-right: 8px;"></div>
-              <span>5+ participants</span>
-            </div>
-            <hr style="margin: 8px 0;">
-            <div style="display: flex; align-items: center; margin: 4px 0;">
-              <div style="width: 12px; height: 12px; background: #e0e0e0; border-radius: 50%; margin-right: 8px;"></div>
-              <span>No participants</span>
-            </div>
-          `;
-          return div;
-        };
-        legend.addTo(map);
-  })
-  .catch(error => console.error('Error loading map data:', error));
+  container.addEventListener("click", event => {
+    if (!event.target.classList.contains("participant-map__marker")) {
+      selectedMarker = null;
+      tooltip.hidden = true;
+    }
+  });
+})();
 </script>
 
 <style>
-.country-boundary {
-  pointer-events: auto;
+.participant-map {
+  margin: 1.5rem 0 2rem;
 }
 
-.legend {
-  line-height: 18px;
+.participant-map__canvas {
+  position: relative;
+}
+
+.participant-map__svg {
+  background: #ededeb;
+  border-radius: 4px;
+  display: block;
+  height: auto;
+  overflow: visible;
+  width: 100%;
+}
+
+.participant-map__background {
+  fill: #ededeb;
+}
+
+.participant-map__land {
+  fill: url("#participant-land-dots");
+}
+
+.participant-map__leaders line {
+  stroke: #8f8f8b;
+  stroke-dasharray: 2 3;
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+.participant-map__marker {
+  cursor: pointer;
+  fill: #d9473f;
+  stroke: #fff;
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  transition: transform 140ms ease, fill 140ms ease;
+  vector-effect: non-scaling-stroke;
+}
+
+.participant-map__marker:hover,
+.participant-map__marker:focus,
+.participant-map__marker:focus-visible {
+  fill: #c8322c;
+  outline: none;
+  transform: scale(1.18);
+}
+
+.participant-map__marker:focus-visible {
+  filter: drop-shadow(0 0 2px #202020);
+}
+
+.participant-map__tooltip {
+  background: rgba(255, 255, 255, 0.97);
+  border: 1px solid #d8d8d4;
+  border-radius: 3px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  color: #222;
+  font-size: 0.82rem;
+  line-height: 1.35;
+  max-width: 220px;
+  padding: 0.55rem 0.65rem;
+  pointer-events: none;
+  position: absolute;
+  width: max-content;
+  z-index: 2;
+}
+
+.participant-map__tooltip strong,
+.participant-map__tooltip span {
+  display: block;
+}
+
+.participant-map__tooltip-place {
   color: #555;
-}
-.legend i {
-  width: 18px;
-  height: 18px;
-  float: left;
-  margin-right: 8px;
-  opacity: 0.7;
+  margin-top: 0.08rem;
 }
 
-/* Ensure map background is white */
-#map {
-  background: white;
+.participant-map__tooltip-count {
+  color: #777;
+  margin-top: 0.2rem;
 }
-</style>
+
+.participant-map figcaption {
+  color: #666;
+  font-size: 0.78rem;
+  margin-top: 0.45rem;
+}
+
+@media (max-width: 600px) {
+  .participant-map__tooltip {
+    font-size: 0.75rem;
+    max-width: 180px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .participant-map__marker {
+    transition: none;
+  }
+}
