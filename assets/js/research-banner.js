@@ -19,18 +19,22 @@
     "Indoor Environment",
     "Energy Systems"
   ];
-  const designatedZones = {
-    "AI": { x: 0.8, y: 0.38, jitterX: 0.04, jitterY: 0.04 },
-    "BEM": { x: 0.34, y: 0.39, jitterX: 0.05, jitterY: 0.04 },
-    "Digital Twins": { x: 0.72, y: 0.62, jitterX: 0.04, jitterY: 0.045 },
-    "Urban Environment": { x: 0.34, y: 0.64, jitterX: 0.04, jitterY: 0.045 }
+  const keywordLayouts = {
+    "Built Environment": { side: "left", offset: "1%", top: "1%", size: "clamp(0.9rem, 3vw, 1.7rem)", opacity: 0.81 },
+    "EV": { side: "right", offset: "4%", top: "1%", size: "clamp(1rem, 3.2vw, 1.8rem)", opacity: 0.81 },
+    "Urban Environment": { side: "left", offset: "1%", top: "21%", size: "clamp(0.82rem, 2.6vw, 1.45rem)", opacity: 0.9 },
+    "AI": { side: "right", offset: "13%", top: "21%", size: "clamp(1.05rem, 3.4vw, 1.9rem)", opacity: 0.81 },
+    "Indoor Environment": { side: "left", offset: "7%", top: "41%", size: "clamp(0.8rem, 2.5vw, 1.4rem)", opacity: 0.9 },
+    "BEM": { side: "right", offset: "5%", top: "41%", size: "clamp(1rem, 3.1vw, 1.75rem)", opacity: 0.81 },
+    "Energy Systems": { side: "left", offset: "1%", top: "61%", size: "clamp(0.82rem, 2.6vw, 1.45rem)", opacity: 0.9 },
+    "Smart Grid": { side: "right", offset: "5%", top: "61%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 },
+    "Digital Twins": { side: "left", offset: "5%", top: "81%", size: "clamp(0.9rem, 2.9vw, 1.65rem)", opacity: 0.9 },
+    "Renewables": { side: "right", offset: "1%", top: "81%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 }
   };
   const slots = [];
   const activeKeywords = new Set();
   const recentKeywords = [];
-  const recentPositions = new Map();
   const cooldownLength = 6;
-  const positionHistoryLength = 3;
   let keywordBag = [];
   let stopped = false;
 
@@ -78,124 +82,14 @@
     if (recentKeywords.length > cooldownLength) recentKeywords.shift();
   }
 
-  function placeKeyword(slot, rememberPosition = true) {
-    const bounds = stage.getBoundingClientRect();
-    const wordBounds = slot.element.getBoundingClientRect();
-    const identity = banner.querySelector(".bee-research-banner__identity");
-    const identityTop = identity.offsetTop;
-    const padding = Math.max(8, Math.min(16, bounds.width * 0.025));
-    const maxX = Math.max(padding, bounds.width - wordBounds.width - padding);
-    const maxY = Math.max(padding, identityTop - wordBounds.height - 12);
-    const designatedZone = designatedZones[keywords[slot.keywordIndex]];
-    let minX = Math.min(maxX, Math.max(padding, bounds.width * 0.24));
-    let minY = Math.min(maxY, Math.max(padding, bounds.height * 0.32));
-    let placementMaxX = maxX;
-    let placementMaxY = maxY;
+  function placeKeyword(slot) {
+    const layout = keywordLayouts[keywords[slot.keywordIndex]];
 
-    if (designatedZone) {
-      const targetX = Math.max(padding, Math.min(
-        maxX,
-        bounds.width * designatedZone.x - wordBounds.width / 2
-      ));
-      const targetY = Math.max(padding, Math.min(
-        maxY,
-        bounds.height * designatedZone.y - wordBounds.height / 2
-      ));
-      const horizontalJitter = bounds.width * designatedZone.jitterX;
-      const verticalJitter = bounds.height * designatedZone.jitterY;
-
-      minX = Math.max(padding, targetX - horizontalJitter);
-      placementMaxX = Math.min(maxX, targetX + horizontalJitter);
-      minY = Math.max(padding, targetY - verticalJitter);
-      placementMaxY = Math.min(maxY, targetY + verticalJitter);
-    }
-
-    let candidate = { x: minX, y: minY };
-    let foundPosition = false;
-    const keywordPositionHistory = recentPositions.get(slot.keywordIndex) || [];
-
-    for (let attempt = 0; attempt < 24; attempt += 1) {
-      candidate = {
-        x: randomBetween(minX, placementMaxX),
-        y: randomBetween(minY, placementMaxY)
-      };
-
-      const overlapsVisibleWord = slots.some(function (otherSlot) {
-        if (otherSlot === slot || !otherSlot.active || !otherSlot.bounds) {
-          return false;
-        }
-
-        return candidate.x < otherSlot.bounds.x + otherSlot.bounds.width + 14 &&
-          candidate.x + wordBounds.width + 14 > otherSlot.bounds.x &&
-          candidate.y < otherSlot.bounds.y + otherSlot.bounds.height + 10 &&
-          candidate.y + wordBounds.height + 10 > otherSlot.bounds.y;
-      });
-
-      const movedEnough = !slot.previousPosition || Math.hypot(
-        Math.abs(candidate.x - slot.previousPosition.x) / Math.max(1, maxX),
-        Math.abs(candidate.y - slot.previousPosition.y) / Math.max(1, maxY)
-      ) > (designatedZone ? 0.025 : 0.24);
-
-      const normalizedCandidate = {
-        x: candidate.x / Math.max(1, bounds.width),
-        y: candidate.y / Math.max(1, bounds.height)
-      };
-      const differsFromKeywordHistory = keywordPositionHistory.every(function (previous, historyIndex) {
-        const distance = Math.hypot(
-          normalizedCandidate.x - previous.x,
-          normalizedCandidate.y - previous.y
-        );
-        const isMostRecent = historyIndex === keywordPositionHistory.length - 1;
-        if (designatedZone) return distance > (isMostRecent ? 0.025 : 0.012);
-        return distance > (isMostRecent ? 0.18 : 0.11);
-      });
-
-      if ((movedEnough || attempt > 14) && differsFromKeywordHistory && !overlapsVisibleWord) {
-        foundPosition = true;
-        break;
-      }
-    }
-
-    if (!foundPosition) return false;
-
-    slot.previousPosition = candidate;
-    slot.bounds = {
-      x: candidate.x,
-      y: candidate.y,
-      width: wordBounds.width,
-      height: wordBounds.height
-    };
-    slot.element.style.transform = `translate(${candidate.x}px, ${candidate.y}px)`;
-
-    if (rememberPosition) {
-      keywordPositionHistory.push({
-        x: candidate.x / Math.max(1, bounds.width),
-        y: candidate.y / Math.max(1, bounds.height)
-      });
-      if (keywordPositionHistory.length > positionHistoryLength) keywordPositionHistory.shift();
-      recentPositions.set(slot.keywordIndex, keywordPositionHistory);
-    }
-
-    return true;
-  }
-
-  function fitKeyword(slot, desiredSize) {
-    slot.element.style.setProperty("--keyword-size", `${desiredSize.toFixed(2)}rem`);
-
-    const stageWidth = stage.getBoundingClientRect().width;
-    const wordWidth = slot.element.getBoundingClientRect().width;
-    const availableWidth = Math.max(1, stageWidth - 16);
-
-    if (wordWidth > availableWidth) {
-      const computedSize = parseFloat(window.getComputedStyle(slot.element).fontSize);
-      const fittedSize = Math.max(18, computedSize * availableWidth / wordWidth);
-      slot.element.style.setProperty("--keyword-size", `${fittedSize.toFixed(1)}px`);
-    }
-
-    const rootSize = parseFloat(window.getComputedStyle(document.documentElement).fontSize);
-    const renderedSize = parseFloat(window.getComputedStyle(slot.element).fontSize) / rootSize;
-    const opacity = renderedSize < 2.15 ? 0.9 : renderedSize < 2.7 ? 0.81 : 0.73;
-    slot.element.style.setProperty("--keyword-opacity", opacity);
+    slot.element.style.left = layout.side === "left" ? layout.offset : "auto";
+    slot.element.style.right = layout.side === "right" ? layout.offset : "auto";
+    slot.element.style.top = layout.top;
+    slot.element.style.setProperty("--keyword-size", layout.size);
+    slot.element.style.setProperty("--keyword-opacity", layout.opacity);
   }
 
   function schedule(slot, delay) {
@@ -205,15 +99,7 @@
       slot.keywordIndex = nextKeywordIndex();
       activeKeywords.add(slot.keywordIndex);
       slot.element.textContent = keywords[slot.keywordIndex];
-      slot.desiredSize = randomBetween(1.65, 3.22);
-      fitKeyword(slot, slot.desiredSize);
-
-      if (!placeKeyword(slot)) {
-        activeKeywords.delete(slot.keywordIndex);
-        keywordBag.unshift(slot.keywordIndex);
-        schedule(slot, randomBetween(188, 413));
-        return;
-      }
+      placeKeyword(slot);
 
       slot.active = true;
       rememberKeyword(slot.keywordIndex);
@@ -242,10 +128,7 @@
       element,
       minPause,
       maxPause,
-      previousPosition: null,
-      bounds: null,
-      active: false,
-      desiredSize: 1.65
+      active: false
     };
     element.className = "bee-research-banner__keyword";
     stage.appendChild(element);
@@ -256,19 +139,6 @@
   makeSlot(188, 525, 113);
   makeSlot(338, 675, 525);
   makeSlot(488, 825, 1013);
-
-  let resizeFrame;
-  window.addEventListener("resize", function () {
-    window.cancelAnimationFrame(resizeFrame);
-    resizeFrame = window.requestAnimationFrame(function () {
-      slots.forEach(function (slot) {
-        if (slot.element.textContent) {
-          fitKeyword(slot, slot.desiredSize);
-          placeKeyword(slot, false);
-        }
-      });
-    });
-  });
 
   motionQuery.addEventListener("change", function (event) {
     if (!event.matches) return;

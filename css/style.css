@@ -139,8 +139,10 @@ h1, h2, h3 {
 }
 
 .bee-research-banner__animation {
-  height: 100%;
-  position: relative;
+  bottom: 42px;
+  left: 0;
+  position: absolute;
+  top: 0;
   width: 100%;
 }
 
@@ -148,7 +150,6 @@ h1, h2, h3 {
   color: rgba(0, 0, 0, 0.82);
   font-size: var(--keyword-size, 2rem);
   font-weight: 500;
-  left: 0;
   line-height: 1.25;
   opacity: 0;
   position: absolute;
@@ -192,10 +193,6 @@ h1, h2, h3 {
 
   .bee-research-banner__building img {
     height: calc(100% - 6px);
-  }
-
-  .bee-research-banner__keyword {
-    font-size: min(var(--keyword-size, 1.75rem), 1.75rem);
   }
 
   .bee-research-banner__identity {
