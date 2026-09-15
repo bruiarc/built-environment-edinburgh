@@ -48,29 +48,57 @@
     console.log('Countdown styles injected. Check if .countdown-number background appears');
   })();
 
-/* ---------- Calculate next last Friday ---------- */
+/* ---------- Calculate the next meeting in UK time ---------- */
+const meetingTimeZone = "Europe/London";
+
+function getUKDateParts(date) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: meetingTimeZone,
+    year: "numeric",
+    month: "numeric",
+    day: "numeric",
+    hour: "numeric",
+    hourCycle: "h23"
+  }).formatToParts(date);
+
+  return Object.fromEntries(
+    parts.filter(part => part.type !== "literal")
+      .map(part => [part.type, Number(part.value)])
+  );
+}
+
+// Convert a calendar time in Europe/London to a browser-independent Date.
+function makeUKDate(year, month, day, hour) {
+  const utcGuess = new Date(Date.UTC(year, month, day, hour));
+  const rendered = getUKDateParts(utcGuess);
+  const offset = Date.UTC(
+    rendered.year,
+    rendered.month - 1,
+    rendered.day,
+    rendered.hour
+  ) - utcGuess.getTime();
+
+  return new Date(utcGuess.getTime() - offset);
+}
+
 function getNextMeetingDate() {
   const now = new Date();
-  const currentYear = now.getFullYear();
-  const currentMonth = now.getMonth();
+  const ukNow = getUKDateParts(now);
+  let year = ukNow.year;
+  let month = ukNow.month - 1;
+  let lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+  let nextMeeting = makeUKDate(year, month, lastDay, 13);
+  let meetingEnd = makeUKDate(year, month, lastDay, 14);
 
-  function getLastFriday(year, month) {
-      const lastDay = new Date(year, month + 1, 0);
-      const day = lastDay.getDay();
-      const diff = (day >= 5) ? day - 5 : 7 - (5 - day);
-      const lastFriday = new Date(lastDay);
-      lastFriday.setDate(lastDay.getDate() - diff);
-      return lastFriday;
-  }
-
-  let nextMeeting = getLastFriday(currentYear, currentMonth);
-  nextMeeting.setHours(13,0,0,0);
-
-  if(nextMeeting <= now){
-      const nextMonth = currentMonth === 11 ? 0 : currentMonth + 1;
-      const nextYear  = currentMonth === 11 ? currentYear + 1 : currentYear;
-      nextMeeting = getLastFriday(nextYear, nextMonth);
-      nextMeeting.setHours(13,0,0,0);
+  // Keep the current meeting active until 14:00; afterwards use next month.
+  if (now >= meetingEnd) {
+      month += 1;
+      if (month === 12) {
+        month = 0;
+        year += 1;
+      }
+      lastDay = new Date(Date.UTC(year, month + 1, 0)).getUTCDate();
+      nextMeeting = makeUKDate(year, month, lastDay, 13);
   }
 
   return nextMeeting;
@@ -81,6 +109,20 @@ function updateCountdown() {
   const now = new Date();
   const nextMeeting = getNextMeetingDate();
   const diff = nextMeeting - now;
+
+  const options = {
+      weekday:'long',
+      year:'numeric',
+      month:'long',
+      day:'numeric',
+      hour:'2-digit',
+      minute:'2-digit',
+      timeZone: meetingTimeZone,
+      timeZoneName:'short'
+  };
+
+  document.getElementById("next-meeting-date").innerHTML =
+      `on ${nextMeeting.toLocaleString("en-GB", options)}–14:00 UK time.`;
 
   if(diff <= 0){
       document.getElementById("meeting-countdown").innerHTML =
@@ -118,22 +160,8 @@ function updateCountdown() {
       </div>
   `;
 
-  const options = {
-      weekday:'long',
-      year:'numeric',
-      month:'long',
-      day:'numeric',
-      hour:'2-digit',
-      minute:'2-digit',
-      second:'2-digit',
-      timeZoneName:'short'
-  };
-
-  document.getElementById("next-meeting-date").innerHTML =
-      `on ${nextMeeting.toLocaleString("en-GB", options)}.`;
 }
 
 /* ---------- Start countdown ---------- */
 setInterval(updateCountdown, 1000);
 updateCountdown();
-

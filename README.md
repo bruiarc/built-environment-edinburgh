@@ -1,4 +1,4 @@
-Welcome to [Built-Environment-Edinburgh](https://ruibogithub.github.io/built-environment-edinburgh/).
+Welcome to [Built-Environment-Edinburgh](https://bruiarc.github.io/built-environment-edinburgh/).
 
 It is a student-led group at the University of Edinburgh focused on research and knowledge exchange in **sustainable and resilient built environments**, where both internal and external participation is welcomed. Main activities include **monthly events**, such as:
   - Project presentations

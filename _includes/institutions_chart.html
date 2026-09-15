@@ -5,20 +5,13 @@
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <script>
-fetch("{{ '/assets/data/participants.csv' | relative_url }}")
-  .then(r => r.text())
-  .then(text => {
-    // Split by line, remove header
-    const rows = text.trim().split("\n").slice(1);
-
+Promise.resolve({{ site.data.participants | jsonify }})
+  .then(rows => {
     const data = rows
-      .map(line => {
-        const [country, city, inst, lat, lon, participants] = line.split(",");
-        return {
-          institution: inst.trim(),
-          participants: +participants
-        };
-      })
+      .map(row => ({
+        institution: row.institution.trim(),
+        participants: Number(row.participants)
+      }))
       .filter(d => d.institution && !isNaN(d.participants));
 
     // Sort institutions by participant count

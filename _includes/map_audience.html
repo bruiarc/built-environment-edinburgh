@@ -18,29 +18,26 @@ fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
   .then(response => response.json())
   .then(worldData => {
     
-    // Load your CSV data
-    fetch("{{ '/assets/data/participants.csv' | relative_url }}")
-      .then(r => r.text())
-      .then(csvText => {
-        const lines = csvText.trim().split("\n").slice(1);
+    // Participant data is loaded by Jekyll from _data/participants.csv.
+    Promise.resolve({{ site.data.participants | jsonify }})
+      .then(rows => {
         const countryParticipants = {};
         const cityData = [];
         
-        // Process CSV data
-        lines.forEach(line => {
-          const [country, city, institution, lat, lon, participants] = line.split(",");
-          const participantsCount = parseInt(participants);
+        rows.forEach(row => {
+          const participantsCount = Number(row.participants);
+          const country = row.country.trim();
           
           // Aggregate by country
-          countryParticipants[country.trim()] = (countryParticipants[country.trim()] || 0) + participantsCount;
+          countryParticipants[country] = (countryParticipants[country] || 0) + participantsCount;
           
           // Store city data
           cityData.push({
-            country: country.trim(),
-            city: city.trim(),
-            institution: institution.trim(),
-            lat: parseFloat(lat),
-            lon: parseFloat(lon),
+            country,
+            city: row.city.trim(),
+            institution: row.institution.trim(),
+            lat: Number(row.latitude),
+            lon: Number(row.longitude),
             participants: participantsCount
           });
         });
@@ -180,7 +177,6 @@ fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.g
   background: white;
 }
 </style>
-
 
 
 

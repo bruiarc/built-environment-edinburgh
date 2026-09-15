@@ -7,9 +7,15 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 <img src="image_logo.png" alt="alt text" style="width:100%;" />
 
 So far, we have:
-- **6** meetings/workshops co-created,<br>
+{% assign meeting_count = site.data.meeting | size %}
+{% assign participant_count = 0 %}
+{% for row in site.data.participants %}
+  {% assign participant_count = participant_count | plus: row.participants %}
+{% endfor %}
+{% assign institution_count = site.data.participants | map: "institution" | uniq | size %}
+- **{{ meeting_count }}** meetings/workshops co-created,<br>
 - **4** PhD works presented,<br>
-- **11** participants from **6** institutions.<br>
+- **{{ participant_count }}** participants from **{{ institution_count }}** institutions.<br>
 
 Next meeting will take place in:
 <div class="countdown-container">
@@ -17,7 +23,7 @@ Next meeting will take place in:
         Loading countdown...
     </div>    
     <div class="meeting-schedule" id="next-meeting-date">
-        📍 Every last Friday of the month at 13:00 UK time
+        📍 On the last day of every month, 13:00–14:00 UK time
     </div>
 </div>
 
