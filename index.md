@@ -24,6 +24,7 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 - **{{ meeting_count }}** meetings/workshops co-created,<br>
 - **{{ phd_work_count }}** PhD works presented,<br>
 - **{{ participant_count }}** participants from **{{ institution_count }}** institutions.<br>
+
 ---
 **What's Next**
 Next meeting will take place in:
