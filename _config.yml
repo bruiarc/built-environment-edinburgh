@@ -17,8 +17,8 @@ sass:
 nav:
   - name: Home
     link: /
-  - name: Talks
-    link: /talks/
+  - name: Projects
+    link: /projects/
   - name: Facilitators
     link: /facilitators/
   - name: Resources
