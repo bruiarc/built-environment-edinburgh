@@ -18,3 +18,5 @@ permalink: /people/
     <a href="https://github.com/RuiBoGithub">GitHub</a>
   </div>
 </div>
+
+Please join the team for organisation!

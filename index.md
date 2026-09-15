@@ -27,12 +27,15 @@ Next meeting will take place in:
 ---
 **Key Updates**
 - 2025-06-02: First meeting!
-- 2025-10-17: New semester meeting!
+<!-- - 2025-10-17: New semester meeting!
 - 2025-11-27: Two members introduced their research outcomes in the November group meeting!
     - Discussed future directions of the group, suggesting a page for showcasing each other's interest;
-    - Presentation from Androniki and Rui.
-- 2026-01-30: A follow-up presentation from Rui.
-
+    - Presentation from Androniki and Rui. -->
+- 2026-05: A talk by *** from PSL.
+- 2026-06: A talk by Rui from the University of Edinburgh.
+- 2026-07: A literature sharing session on machine learning in the built environment.
+- 2026-08: A talk by *** from Hong Kong PolyU.
+  
 *Geographic Distribution of Audience*
 {% include map_audience.html %}
 ---
