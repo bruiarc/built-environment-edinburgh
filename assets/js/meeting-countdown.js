@@ -1,3 +1,48 @@
+/* The default layout does not load css/style.css, so keep this component's
+   presentation self-contained. */
+(function addCountdownStyles() {
+  if (document.getElementById("countdown-style")) return;
+
+  const style = document.createElement("style");
+  style.id = "countdown-style";
+  style.textContent = `
+    .countdown-grid {
+      display: flex;
+      flex-wrap: nowrap;
+      justify-content: center;
+      gap: clamp(6px, 2vw, 18px);
+      margin: 12px 0;
+      font-family: system-ui, -apple-system, Arial, sans-serif;
+    }
+    .countdown-item {
+      min-width: 0;
+      text-align: center;
+    }
+    .countdown-number {
+      align-items: center;
+      background: #000 !important;
+      border-radius: 8px;
+      color: #fff !important;
+      display: flex;
+      font-size: clamp(1.5rem, 6vw, 2.6rem);
+      font-weight: 700;
+      height: clamp(58px, 18vw, 80px);
+      justify-content: center;
+      line-height: 1;
+      width: clamp(58px, 18vw, 80px);
+    }
+    .time-label {
+      color: #555;
+      display: block;
+      font-size: clamp(0.62rem, 2vw, 0.8rem);
+      letter-spacing: 1px;
+      margin-top: 6px;
+      text-transform: uppercase;
+    }
+  `;
+  document.head.appendChild(style);
+})();
+
 const meetingTimeZone = "Europe/London";
 
 function getUKDateParts(date) {
