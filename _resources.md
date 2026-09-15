@@ -1,7 +1,7 @@
 ---
-layout: page
+layout: default
 title: Resources
-permalink: /_resources/
+permalink: /resources/
 ---
 <!-- Members at `Built Environment Edinburgh` community! -->
 **📌 Conferences**

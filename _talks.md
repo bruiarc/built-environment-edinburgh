@@ -1,7 +1,7 @@
 ---
-layout: page
-title: Talks
-permalink: /_talks/
+layout: default
+title: Projects
+permalink: /projects/
 ---
 
 <!-- **Projects at `Built Environment Edinburgh` community!** -->

@@ -1,7 +1,7 @@
 ---
-layout: page
+layout: default
 title: Facilitators
-permalink: /_facilitators/
+permalink: /facilitators/
 ---
 <!-- Members at `Built Environment Edinburgh` community! -->
 
