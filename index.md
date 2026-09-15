@@ -41,10 +41,10 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 **Key Updates**
 
 - 2025-06-02: First meeting!
-- 2026-05: A talk on *occupancy-based control* by *** from PSL.
-- 2026-06: A talk on *model complexity required for energy-saving estimates* by Rui from the University of Edinburgh.
+- 2026-05: A talk on ***occupancy-based control*** by *** from PSL.
+- 2026-06: A talk on ***model complexity required for energy-saving estimates*** by Rui from the University of Edinburgh.
 - 2026-07: A literature sharing session on *machine learning in the built environment*.
-- 2026-08: A talk on *model calibration technique* by *** from Hong Kong PolyU.
+- 2026-08: A talk on ***model calibration technique*** by *** from Hong Kong PolyU.
   
 *Geographic Distribution of Audience*
 {% include map_audience.html %}
