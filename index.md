@@ -6,7 +6,7 @@ Welcome to `Built Environment Edinburgh (BEE)` community, a PhD student-led grou
 
 <div class="bee-research-banner" data-bee-banner>
   <div class="bee-research-banner__building">
-    <img src="{{ '/_data/logo.svg' | relative_url }}" alt="Built Environment Edinburgh (BEE) building mark">
+    <img src="{{ '/assets/img/logo.svg' | relative_url }}" alt="Built Environment Edinburgh (BEE) building mark">
   </div>
   <div class="bee-research-banner__keywords" aria-hidden="true">
     <div class="bee-research-banner__static">
@@ -14,6 +14,7 @@ Welcome to `Built Environment Edinburgh (BEE)` community, a PhD student-led grou
       Bayesian Analysis <span>·</span> EV <span>·</span> Heat Pumps <span>·</span> Renewables
     </div>
     <div class="bee-research-banner__animation"></div>
+    <p class="bee-research-banner__identity">Built Environment Edinburgh</p>
   </div>
 </div>
 

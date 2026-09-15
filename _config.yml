@@ -12,7 +12,6 @@ markdown: kramdown
 theme: jekyll-theme-cayman
 include:
   - _pages
-  - _data/logo.svg
 sass:
   style: expanded
 nav:
