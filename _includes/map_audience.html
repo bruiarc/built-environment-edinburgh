@@ -76,7 +76,16 @@ the browser makes no tile, GeoJSON, or participant-data requests.
 
   function findPosition(base, radius) {
     const clearance = 4;
+    const sharesCoordinates = placed.some(marker =>
+      marker.baseX === base.x && marker.baseY === base.y
+    );
+
+    // Institutions at identical coordinates remain concentric. Since markers
+    // are drawn largest-first, each smaller circle stays visible on top.
+    if (sharesCoordinates) return base;
+
     const available = candidate => placed.every(marker =>
+      marker.baseX === base.x && marker.baseY === base.y ||
       Math.hypot(candidate.x - marker.x, candidate.y - marker.y) >=
         radius + marker.radius + clearance
     );
@@ -138,7 +147,7 @@ the browser makes no tile, GeoJSON, or participant-data requests.
       // Radius follows sqrt(count), making circle area proportional to count.
       const radius = 4.8 * Math.sqrt(datum.participants);
       const point = findPosition(base, radius);
-      placed.push({ ...point, radius });
+      placed.push({ ...point, radius, baseX: base.x, baseY: base.y });
 
       if (Math.hypot(point.x - base.x, point.y - base.y) > 1) {
         const leader = document.createElementNS(svgNS, "line");
@@ -314,3 +323,4 @@ the browser makes no tile, GeoJSON, or participant-data requests.
     transition: none;
   }
 }
+</style>

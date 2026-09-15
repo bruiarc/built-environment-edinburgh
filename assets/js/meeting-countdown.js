@@ -51,6 +51,7 @@ function getNextMeetingDate(now = new Date()) {
 }
 
 function updateMeetingDate() {
+  const now = new Date();
   const nextMeeting = getNextMeetingDate();
   const dateOptions = {
     weekday: "long",
@@ -72,6 +73,34 @@ function updateMeetingDate() {
 
   document.getElementById("next-meeting-date").textContent =
     `on ${nextMeeting.toLocaleString("en-GB", dateOptions)} (${offsetName})`;
+
+  const difference = Math.max(0, nextMeeting - now);
+  const days = Math.floor(difference / 86400000);
+  const hours = Math.floor(difference % 86400000 / 3600000);
+  const minutes = Math.floor(difference % 3600000 / 60000);
+  const seconds = Math.floor(difference % 60000 / 1000);
+  const pad = value => String(value).padStart(2, "0");
+
+  document.getElementById("meeting-countdown").innerHTML = `
+    <div class="countdown-grid">
+      <div class="countdown-item">
+        <span class="countdown-number">${days}</span>
+        <span class="time-label">Days</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-number">${pad(hours)}</span>
+        <span class="time-label">Hours</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-number">${pad(minutes)}</span>
+        <span class="time-label">Minutes</span>
+      </div>
+      <div class="countdown-item">
+        <span class="countdown-number">${pad(seconds)}</span>
+        <span class="time-label">Seconds</span>
+      </div>
+    </div>`;
 }
 
 updateMeetingDate();
+setInterval(updateMeetingDate, 1000);

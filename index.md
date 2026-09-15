@@ -29,6 +29,9 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
 **What's Next**
 
 <div class="countdown-container">
+    <div class="countdown-display" id="meeting-countdown">
+        Loading countdown…
+    </div>
     <div class="meeting-schedule" id="next-meeting-date">
         Loading next meeting date…
     </div>
@@ -48,6 +51,7 @@ Welcome to `Built Environment Edinburgh` community, a PhD student-led group at t
   
 *Geographic Distribution of Audience*
 {% include map_audience.html %}
+
 ---
 **Main Contacts**
 
