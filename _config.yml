@@ -12,6 +12,7 @@ markdown: kramdown
 theme: jekyll-theme-cayman
 include:
   - _pages
+  - _data/logo.svg
 sass:
   style: expanded
 nav:
@@ -19,7 +20,7 @@ nav:
     link: /
   - name: Talks
     link: /talks/
-  - name: Facilitators
-    link: /facilitators/
   - name: Resources
     link: /resources/
+  - name: Facilitators
+    link: /facilitators/

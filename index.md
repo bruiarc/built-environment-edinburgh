@@ -4,7 +4,20 @@ title: Home
 ---
 Welcome to `Built Environment Edinburgh (BEE)` community, a PhD student-led group at the [University of Edinburgh](https://www.ed.ac.uk/), promoting research exchange in *sustainable and resilient built environments*, open to both internal and external participants. 
 
-<img src="image_logo.png" alt="alt text" style="width:100%;" />
+<div class="bee-research-banner" data-bee-banner>
+  <div class="bee-research-banner__building">
+    <img src="{{ '/_data/logo.svg' | relative_url }}" alt="Built Environment Edinburgh (BEE) building mark">
+  </div>
+  <div class="bee-research-banner__keywords" aria-hidden="true">
+    <div class="bee-research-banner__static">
+      Built Environment <span>·</span> AI <span>·</span> BEM <span>·</span>
+      Bayesian Analysis <span>·</span> EV <span>·</span> Heat Pumps <span>·</span> Renewables
+    </div>
+    <div class="bee-research-banner__animation"></div>
+  </div>
+</div>
+
+<script defer src="{{ '/assets/js/research-banner.js' | relative_url }}"></script>
 
 The [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20next%20BEE%20meeting%20.) will take place in:
 
