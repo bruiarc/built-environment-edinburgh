@@ -15,12 +15,12 @@ body {
 }
 
 a {
-  color: #3f6491;
+  color: #35699f;
   text-decoration: none;
 }
 
 a:hover {
-  color: #294f7d;
+  color: #23578f;
 }
 
 a:focus-visible {
@@ -49,12 +49,12 @@ a:focus-visible {
 
 .nav a {
   text-decoration: none;
-  color: #3f6491;
+  color: #35699f;
   font-weight: 500;
 }
 
 .nav a:hover {
-  color: #294f7d;
+  color: #23578f;
   text-decoration: none;
 }
 
