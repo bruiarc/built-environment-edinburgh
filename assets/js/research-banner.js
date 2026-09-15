@@ -9,30 +9,22 @@
   const stage = banner.querySelector(".bee-research-banner__animation");
   const keywords = [
     "Built Environment",
-    "AI",
     "BEM",
-    "Bayesian Analysis",
     "EV",
-    "Heat Pumps",
     "Renewables",
-    "Net Zero",
-    "Building Performance",
-    "Energy Efficiency",
-    "Retrofit",
+    "AI",
     "Digital Twins",
-    "Urban Resilience",
-    "Indoor Environment",
-    "HVAC",
-    "Power Systems",
+    "Urban Environment",
     "Smart Grid",
-    "Building Controls",
-    "Energy Storage",
-    "Demand Response",
-    "Electrification",
-    "Energy Systems",
-    "Building Physics",
-    "Urban Energy"
+    "Indoor Environment",
+    "Energy Systems"
   ];
+  const designatedZones = {
+    "AI": { x: 0.8, y: 0.38, jitterX: 0.04, jitterY: 0.04 },
+    "BEM": { x: 0.34, y: 0.39, jitterX: 0.05, jitterY: 0.04 },
+    "Digital Twins": { x: 0.72, y: 0.62, jitterX: 0.04, jitterY: 0.045 },
+    "Urban Environment": { x: 0.34, y: 0.64, jitterX: 0.04, jitterY: 0.045 }
+  };
   const slots = [];
   const activeKeywords = new Set();
   const recentKeywords = [];
@@ -94,16 +86,38 @@
     const padding = Math.max(8, Math.min(16, bounds.width * 0.025));
     const maxX = Math.max(padding, bounds.width - wordBounds.width - padding);
     const maxY = Math.max(padding, identityTop - wordBounds.height - 12);
-    const minX = Math.min(maxX, Math.max(padding, bounds.width * 0.24));
-    const minY = Math.min(maxY, Math.max(padding, bounds.height * 0.32));
+    const designatedZone = designatedZones[keywords[slot.keywordIndex]];
+    let minX = Math.min(maxX, Math.max(padding, bounds.width * 0.24));
+    let minY = Math.min(maxY, Math.max(padding, bounds.height * 0.32));
+    let placementMaxX = maxX;
+    let placementMaxY = maxY;
+
+    if (designatedZone) {
+      const targetX = Math.max(padding, Math.min(
+        maxX,
+        bounds.width * designatedZone.x - wordBounds.width / 2
+      ));
+      const targetY = Math.max(padding, Math.min(
+        maxY,
+        bounds.height * designatedZone.y - wordBounds.height / 2
+      ));
+      const horizontalJitter = bounds.width * designatedZone.jitterX;
+      const verticalJitter = bounds.height * designatedZone.jitterY;
+
+      minX = Math.max(padding, targetX - horizontalJitter);
+      placementMaxX = Math.min(maxX, targetX + horizontalJitter);
+      minY = Math.max(padding, targetY - verticalJitter);
+      placementMaxY = Math.min(maxY, targetY + verticalJitter);
+    }
+
     let candidate = { x: minX, y: minY };
     let foundPosition = false;
     const keywordPositionHistory = recentPositions.get(slot.keywordIndex) || [];
 
     for (let attempt = 0; attempt < 24; attempt += 1) {
       candidate = {
-        x: randomBetween(minX, maxX),
-        y: randomBetween(minY, maxY)
+        x: randomBetween(minX, placementMaxX),
+        y: randomBetween(minY, placementMaxY)
       };
 
       const overlapsVisibleWord = slots.some(function (otherSlot) {
@@ -120,7 +134,7 @@
       const movedEnough = !slot.previousPosition || Math.hypot(
         Math.abs(candidate.x - slot.previousPosition.x) / Math.max(1, maxX),
         Math.abs(candidate.y - slot.previousPosition.y) / Math.max(1, maxY)
-      ) > 0.24;
+      ) > (designatedZone ? 0.025 : 0.24);
 
       const normalizedCandidate = {
         x: candidate.x / Math.max(1, bounds.width),
@@ -132,6 +146,7 @@
           normalizedCandidate.y - previous.y
         );
         const isMostRecent = historyIndex === keywordPositionHistory.length - 1;
+        if (designatedZone) return distance > (isMostRecent ? 0.025 : 0.012);
         return distance > (isMostRecent ? 0.18 : 0.11);
       });
 
