@@ -17,7 +17,7 @@
     "Digital Twins",
     "Smart Grid",
     "AI",
-    "Renewables",
+    "Net Zero",
     "Heat Pumps",
     "Energy Systems",
     "Urban Environment",
@@ -38,7 +38,7 @@
       offset: "5%",
       top: "5%",
       size: "clamp(1rem, 3.2vw, 1.8rem)",
-      opacity: 0.81
+      opacity: 0.6
     },
     "Smart Grid": {
       side: "left",
@@ -54,7 +54,7 @@
       size: "clamp(1.05rem, 3.4vw, 1.9rem)",
       opacity: 0.81
     },
-    "Renewables": {
+    "Net Zero": {
       side: "left",
       offset: "35%",
       top: "41%",
@@ -80,21 +80,21 @@
       offset: "1%",
       top: "73%",
       size: "clamp(0.9rem, 2.8vw, 1.55rem)",
-      opacity: 0.9
+      opacity: 0.81
     },
     "EV": {
       side: "left",
       offset: "5%",
       top: "77%",
       size: "clamp(0.9rem, 2.9vw, 1.65rem)",
-      opacity: 0.9
+      opacity: 0.81
     },
     "Indoor Environment": {
       side: "right",
       offset: "25%",
       top: "85%",
       size: "clamp(0.82rem, 2.6vw, 1.45rem)",
-      opacity: 0.6
+      opacity: 0.81
     }
   };
 
