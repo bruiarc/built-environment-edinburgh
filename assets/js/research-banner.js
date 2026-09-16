@@ -14,7 +14,7 @@
     "Digital Twins",
     "Smart Grid",
     "AI",
-    "Net Zero",
+    "Renewables",
     "Heat Pumps",
     "Energy Systems",
     "Urban Environment",
@@ -51,7 +51,7 @@
       size: "clamp(1.05rem, 3.4vw, 1.9rem)",
       opacity: 0.81
     },
-    "Net Zero": {
+    "Renewables": {
       side: "left",
       offset: "35%",
       top: "41%",
@@ -217,7 +217,7 @@
       });
 
       const visibleFor = reducedMotion
-        ? randomBetween(2200, 3200)
+        ? randomBetween(1400, 2000)
         : randomBetween(900, 1463);
 
       window.setTimeout(function () {
@@ -260,10 +260,11 @@
   if (reducedMotion) {
     /*
      * Accessibility compromise:
-     * retain the visual effect, but only one keyword changes
-     * at a time and at a much slower pace.
+     * retain the randomized effect with fewer simultaneous items,
+     * longer timings, and only a very small amount of movement.
      */
-    makeSlot(1400, 2200, 300);
+    makeSlot(750, 1200, 300);
+    makeSlot(900, 1400, 1050);
   } else {
     makeSlot(188, 525, 113);
     makeSlot(338, 675, 525);

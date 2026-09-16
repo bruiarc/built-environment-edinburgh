@@ -204,7 +204,12 @@ h1, h2, h3 {
 
 @media (prefers-reduced-motion: reduce) {
   .bee-research-banner__keyword {
-    transition: none;
+    transform: translateY(2px);
+    transition: opacity 0.7s ease-in-out, transform 0.7s ease-in-out;
+  }
+
+  .bee-research-banner__keyword.is-visible {
+    transform: translateY(0);
   }
 }
 
