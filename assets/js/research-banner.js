@@ -283,7 +283,7 @@
     /*
      * Accessibility compromise:
      * retain the randomized effect with fewer simultaneous items,
-     * longer timings, and only a very small amount of movement.
+     * longer timings, and a gentle opacity-only transition.
      */
     makeSlot(300);
     makeSlot(1050);
