@@ -28,7 +28,7 @@
       side: "left",
       offset: "35%",
       top: "41%",
-      size: "clamp(0.8rem, 2.5vw, 1.4rem)",
+      size: "clamp(1.05rem, 3.4vw, 1.9rem)",
       opacity: 0.9
     },
     "Heat Pumps": { side: "right", offset: "12%", top: "49%", size: "clamp(1rem, 3.1vw, 1.75rem)", opacity: 0.81 },
