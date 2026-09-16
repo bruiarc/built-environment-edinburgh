@@ -101,22 +101,18 @@
   const slots = [];
   const activeKeywords = new Set();
   const recentKeywords = [];
-  const cooldownLength = 4;
+  const cooldownLength = reducedMotion ? 5 : 6;
   const timing = reducedMotion
-    ? {
-        visibleMin: 1250,
-        visibleMax: 1750,
-        pauseMin: 450,
-        pauseMax: 950,
-        fadeOut: 700
-      }
-    : {
-        visibleMin: 900,
-        visibleMax: 1460,
-        pauseMin: 190,
-        pauseMax: 830,
-        fadeOut: 490
-      };
+  ? {
+      visibleMin: 1250,
+      visibleMax: 1750,
+      fadeOut: 550
+    }
+  : {
+      visibleMin: 900,
+      visibleMax: 1463,
+      fadeOut: 490
+    };
 
   let keywordBag = [];
   let stopped = false;
@@ -255,41 +251,49 @@
 
           activeKeywords.delete(slot.keywordIndex);
 
-          schedule(slot, randomBetween(timing.pauseMin, timing.pauseMax));
+          schedule(
+            slot,
+            randomBetween(slot.minPause, slot.maxPause)
+          );
         }, timing.fadeOut);
       }, visibleFor);
     }, delay);
   }
 
-  function makeSlot(initialDelay) {
+  function makeSlot(minPause, maxPause, initialDelay) {
     const element = document.createElement("span");
-
+  
     const slot = {
       element,
+      minPause,
+      maxPause,
       active: false
     };
-
+  
     element.className =
       "bee-research-banner__keyword";
-
+  
     stage.appendChild(element);
-
+  
     slots.push(slot);
-
+  
     schedule(slot, initialDelay);
   }
 
   if (reducedMotion) {
     /*
-     * Accessibility compromise:
-     * retain the randomized effect with fewer simultaneous items,
-     * longer timings, and a gentle opacity-only transition.
+     * Reduced-motion compromise:
+     * two slots, slightly slower changes, but still close
+     * to the original visual character.
      */
-    makeSlot(300);
-    makeSlot(1050);
+    makeSlot(450, 750, 150);
+    makeSlot(650, 950, 650);
   } else {
-    makeSlot(110);
-    makeSlot(520);
-    makeSlot(1010);
+    /*
+     * Preserve the original normal animation timing.
+     */
+    makeSlot(188, 525, 113);
+    makeSlot(338, 675, 525);
+    makeSlot(488, 825, 1013);
   }
 }());
