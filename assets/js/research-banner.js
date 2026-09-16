@@ -35,7 +35,7 @@
     "Energy Systems": { side: "left", offset: "10%", top: "61%", size: "clamp(0.82rem, 2.6vw, 1.45rem)", opacity: 0.9 },
     "Urban Environment": { side: "right", offset: "1%", top: "73%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 },
     "EV": { side: "left", offset: "25%", top: "77%", size: "clamp(0.9rem, 2.9vw, 1.65rem)", opacity: 0.9 },
-    "Indoor Environment": { side: `"right", offset: "5%", top: "81%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 }
+    "Indoor Environment": { side: "right", offset: "5%", top: "81%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 }
   };
   const slots = [];
   const activeKeywords = new Set();
