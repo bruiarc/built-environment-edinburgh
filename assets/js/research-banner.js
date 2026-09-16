@@ -7,6 +7,9 @@
   if (!banner) return;
 
   const stage = banner.querySelector(".bee-research-banner__animation");
+
+  if (!stage) return;
+
   const reducedMotion = motionQuery.matches;
 
   const keywords = [
@@ -98,8 +101,22 @@
   const slots = [];
   const activeKeywords = new Set();
   const recentKeywords = [];
-
-  const cooldownLength = reducedMotion ? 4 : 6;
+  const cooldownLength = 4;
+  const timing = reducedMotion
+    ? {
+        visibleMin: 1250,
+        visibleMax: 1750,
+        pauseMin: 450,
+        pauseMax: 950,
+        fadeOut: 700
+      }
+    : {
+        visibleMin: 900,
+        visibleMax: 1460,
+        pauseMin: 190,
+        pauseMax: 830,
+        fadeOut: 490
+      };
 
   let keywordBag = [];
   let stopped = false;
@@ -115,45 +132,50 @@
   }
 
   function refillKeywordBag() {
-    keywordBag = keywords.map(function (_, index) {
+    const existingIndexes = new Set(keywordBag);
+    const refill = keywords.map(function (_, index) {
       return index;
+    }).filter(function (index) {
+      return !existingIndexes.has(index);
     });
 
-    for (let index = keywordBag.length - 1; index > 0; index -= 1) {
+    for (let index = refill.length - 1; index > 0; index -= 1) {
       const swapIndex = Math.floor(Math.random() * (index + 1));
 
-      [keywordBag[index], keywordBag[swapIndex]] =
-        [keywordBag[swapIndex], keywordBag[index]];
+      [refill[index], refill[swapIndex]] =
+        [refill[swapIndex], refill[index]];
     }
+
+    keywordBag = keywordBag.concat(refill);
   }
 
   function nextKeywordIndex() {
-    const deferred = [];
-
-    while (deferred.length <= keywords.length) {
-      if (keywordBag.length === 0) {
-        refillKeywordBag();
-        deferred.length = 0;
-      }
-
-      const index = keywordBag.pop();
-
-      if (
-        !activeKeywords.has(index) &&
-        !recentKeywords.includes(index)
-      ) {
-        keywordBag.unshift(...deferred);
-        return index;
-      }
-
-      deferred.push(index);
+    if (keywordBag.length === 0) {
+      refillKeywordBag();
     }
 
-    keywordBag.unshift(...deferred);
-
-    return keywords.findIndex(function (_, index) {
-      return !activeKeywords.has(index);
+    let bagPosition = keywordBag.findIndex(function (index) {
+      return !activeKeywords.has(index) &&
+        !recentKeywords.includes(index);
     });
+
+    /* Only relax the cooldown if the current bag has no valid choice. */
+    if (bagPosition < 0) {
+      bagPosition = keywordBag.findIndex(function (index) {
+        return !activeKeywords.has(index);
+      });
+    }
+
+    /* A nearly exhausted bag can contain only terms active in other slots. */
+    if (bagPosition < 0) {
+      refillKeywordBag();
+      bagPosition = keywordBag.findIndex(function (index) {
+        return !activeKeywords.has(index) &&
+          !recentKeywords.includes(index);
+      });
+    }
+
+    return bagPosition < 0 ? -1 : keywordBag.splice(bagPosition, 1)[0];
   }
 
   function rememberKeyword(index) {
@@ -166,9 +188,13 @@
 
   function placeKeyword(slot) {
     const keyword = keywords[slot.keywordIndex];
-    const layout = keywordLayouts[keyword];
-
-    if (!layout) return;
+    const layout = keywordLayouts[keyword] || {
+      side: slot.keywordIndex % 2 === 0 ? "left" : "right",
+      offset: "10%",
+      top: "45%",
+      size: "clamp(0.9rem, 2.8vw, 1.55rem)",
+      opacity: 0.82
+    };
 
     slot.element.style.left =
       layout.side === "left" ? layout.offset : "auto";
@@ -216,9 +242,10 @@
         });
       });
 
-      const visibleFor = reducedMotion
-        ? randomBetween(1400, 2000)
-        : randomBetween(900, 1463);
+      const visibleFor = randomBetween(
+        timing.visibleMin,
+        timing.visibleMax
+      );
 
       window.setTimeout(function () {
         slot.element.classList.remove("is-visible");
@@ -228,22 +255,17 @@
 
           activeKeywords.delete(slot.keywordIndex);
 
-          schedule(
-            slot,
-            randomBetween(slot.minPause, slot.maxPause)
-          );
-        }, reducedMotion ? 700 : 490);
+          schedule(slot, randomBetween(timing.pauseMin, timing.pauseMax));
+        }, timing.fadeOut);
       }, visibleFor);
     }, delay);
   }
 
-  function makeSlot(minPause, maxPause, initialDelay) {
+  function makeSlot(initialDelay) {
     const element = document.createElement("span");
 
     const slot = {
       element,
-      minPause,
-      maxPause,
       active: false
     };
 
@@ -263,11 +285,11 @@
      * retain the randomized effect with fewer simultaneous items,
      * longer timings, and only a very small amount of movement.
      */
-    makeSlot(750, 1200, 300);
-    makeSlot(900, 1400, 1050);
+    makeSlot(300);
+    makeSlot(1050);
   } else {
-    makeSlot(188, 525, 113);
-    makeSlot(338, 675, 525);
-    makeSlot(488, 825, 1013);
+    makeSlot(110);
+    makeSlot(520);
+    makeSlot(1010);
   }
 }());
