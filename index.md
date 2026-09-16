@@ -2,7 +2,7 @@
 layout: default
 title: Home
 ---
-Welcome to **Built Environment Edinburg`h (BEE)** community, a PhD student-led group at the [University of Edinburgh](https://www.ed.ac.uk/), promoting research exchange in *sustainable and resilient built environments*, open to both internal and external participants. 
+Welcome to **Built Environment Edinburgh (BEE)** community, a PhD student-led group at the [University of Edinburgh](https://www.ed.ac.uk/), promoting research exchange in *sustainable and resilient built environments*, open to both internal and external participants. 
 
 <div class="bee-research-banner" data-bee-banner>
   <div class="bee-research-banner__building">
