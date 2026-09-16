@@ -21,21 +21,21 @@
   ];
   const keywordLayouts = {
     "Energy Modelling": { side: "left", offset: "1%", top: "1%", size: "clamp(0.9rem, 3vw, 1.7rem)", opacity: 0.81 },
-    "Digital Twins": { side: "right", offset: "4%", top: "1%", size: "clamp(1rem, 3.2vw, 1.8rem)", opacity: 0.81 },
-    "Smart Grid": { side: "left", offset: "20%", top: "21%", size: "clamp(0.82rem, 2.6vw, 1.45rem)", opacity: 0.9 },
+    "Digital Twins": { side: "right", offset: "5%", top: "5%", size: "clamp(1rem, 3.2vw, 1.8rem)", opacity: 0.81 },
+    "Smart Grid": { side: "left", offset: "20%", top: "25%", size: "clamp(0.82rem, 2.6vw, 1.45rem)", opacity: 0.9 },
     "AI": { side: "right", offset: "13%", top: "21%", size: "clamp(1.05rem, 3.4vw, 1.9rem)", opacity: 0.81 },
     "Net Zero": {
       side: "left",
-      offset: "44%",
+      offset: "35%",
       top: "41%",
       size: "clamp(0.8rem, 2.5vw, 1.4rem)",
       opacity: 0.9
     },
-    "Heat Pumps": { side: "right", offset: "5%", top: "41%", size: "clamp(1rem, 3.1vw, 1.75rem)", opacity: 0.81 },
+    "Heat Pumps": { side: "right", offset: "12%", top: "49%", size: "clamp(1rem, 3.1vw, 1.75rem)", opacity: 0.81 },
     "Energy Systems": { side: "left", offset: "10%", top: "61%", size: "clamp(0.82rem, 2.6vw, 1.45rem)", opacity: 0.9 },
-    "Urban Environment": { side: "right", offset: "5%", top: "61%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 },
-    "EV": { side: "left", offset: "35%", top: "81%", size: "clamp(0.9rem, 2.9vw, 1.65rem)", opacity: 0.9 },
-    "Indoor Environment": { side: "right", offset: "1%", top: "81%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 }
+    "Urban Environment": { side: "right", offset: "1%", top: "73%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 },
+    "EV": { side: "left", offset: "25%", top: "77%", size: "clamp(0.9rem, 2.9vw, 1.65rem)", opacity: 0.9 },
+    "Indoor Environment": { side: `"right", offset: "5%", top: "81%", size: "clamp(0.9rem, 2.8vw, 1.55rem)", opacity: 0.9 }
   };
   const slots = [];
   const activeKeywords = new Set();
