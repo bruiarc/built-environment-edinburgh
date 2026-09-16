@@ -52,6 +52,9 @@ The [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&bo
 - **{{ participant_count }}** participants from **{{ institution_count }}** institutions.<br>
 
 
+*Geographic Distribution of Audience*
+{% include map_audience.html %}
+
 ---
 **Key Updates**
 
@@ -60,9 +63,6 @@ The [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&bo
 - 2026-06: A talk on ***model complexity required for energy-saving estimates*** by Rui from the University of Edinburgh.
 - 2026-07: A literature sharing session on *machine learning in the built environment*.
 - 2026-08: A talk on ***occupancy-based control*** by *** from Hong Kong PolyU.
-
-*Geographic Distribution of Audience*
-{% include map_audience.html %}
 
 ---
 **Main Contacts**
