@@ -23,7 +23,7 @@
     "Energy Modelling": { side: "left", offset: "1%", top: "1%", size: "clamp(0.9rem, 3vw, 1.7rem)", opacity: 0.81 },
     "Digital Twins": { side: "right", offset: "5%", top: "5%", size: "clamp(1rem, 3.2vw, 1.8rem)", opacity: 0.81 },
     "Smart Grid": { side: "left", offset: "20%", top: "25%", size: "clamp(0.82rem, 2.6vw, 1.45rem)", opacity: 0.9 },
-    "AI": { side: "right", offset: "13%", top: "21%", size: "clamp(1.05rem, 3.4vw, 1.9rem)", opacity: 0.81 },
+    "AI": { side: "right", offset: "13%", top: "28%", size: "clamp(1.05rem, 3.4vw, 1.9rem)", opacity: 0.81 },
     "Net Zero": {
       side: "left",
       offset: "35%",
