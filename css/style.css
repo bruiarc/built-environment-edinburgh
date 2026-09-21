@@ -1,8 +1,18 @@
 blockquote {
+  box-sizing: border-box;
+  border-left: 4px solid #d8d8d8 !important;
+  font-size: 0.875em;
   margin: 1em 0;
-  padding: 0.2em 1em;
+  padding: 0 1em;
   color: #666;
-  border-left: 4px solid #d8d8d8;
+}
+
+blockquote > :first-child {
+  margin-top: 0;
+}
+
+blockquote > :last-child {
+  margin-bottom: 0;
 }
 
 html {

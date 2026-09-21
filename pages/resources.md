@@ -7,4 +7,4 @@ permalink: /resources/
 **📌 Conferences**
 * [IBPSA 2027](https://bs2027.org): 20-21 October 2027 in Vienna, Austria
 
-> <small>Please [get in touch](mailto:rui.bo@ed.ac.uk?subject=Competition%20Enquiry) if you are interested in the accompanying [modelling competition](https://bs2027.org/modelling-competition/).</small>
+> Please [get in touch](mailto:rui.bo@ed.ac.uk?subject=Competition%20Enquiry) if you are interested in the accompanying [modelling competition](https://bs2027.org/modelling-competition/).
