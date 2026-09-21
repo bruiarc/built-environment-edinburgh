@@ -12,7 +12,7 @@ permalink: /talks/
 > Please contact if interested in the actvitity [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20next%20BEE%20meeting%20.) 
 
 ### 2026-08: An occupancy centric control application for the built environment
-* Abstract: NA
+> Abstract: NA
 
 ### 2026-06: Fit-for-purpose modelling for building retrofit and operation planning: detailed versus lumped-parameter simulations under varying data constraints
 
@@ -21,7 +21,7 @@ permalink: /talks/
     
 
 ### 2026-05: A novel data-driven approach for building energy model calibration
-* Abstract: NA
+> Abstract: NA
 
 
 
