@@ -5,7 +5,7 @@ permalink: /talks/
 ---
 
 <!-- **Talks at `Built Environment Edinburgh` community!** -->
-### 2026-08: An automated benchmarking framework of models for energy-saving evaluation
+### 2026-08: An automated calibration benchmarking framework for energy-saving evaluation
 
 > Abstract: A framework is proposed to anticipate potential issues in calibration methodology design in order to improve confidence in model predictions under a calibration-based workflow. <br>
 Please contact if interested in the actvitity [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20next%20BEE%20meeting%20.)
@@ -15,7 +15,7 @@ Please contact if interested in the actvitity [next BEE meeting](mailto:rui.bo@e
 
 ### 2026-06: Fit-for-purpose modelling for building retrofit and operation planning: detailed versus lumped-parameter simulations under varying data constraints
 
-> Abstract: Building energy models (BEMs) are increasingly used to evaluate energy conservation measures (ECMs), including energy retrofits and building operation and control strategies. Such applications require models configured with reliable inputs while producing reliable predictions. Given the multi-physics nature of buildings and their systems, this typically requires either extensive data collection or carefully curated model calibration. Data collection is labour- and cost-intensive, while calibration is sensitive to the quality of input data in base models. This raises a key question: what minimal data, given a specific model complexity, are required for calibration to enable robust ECM evaluation? Currently, systematic methodologies or guidelines addressing this issue remain limited. This study examines how (i) model configuration complexity, ranging from detailed EnergyPlus simulations to lumped-parameter resistor–capacitor (RC) models, and (ii) BEM input-data quality affect predictive performance and ECM evaluation under uncertainty.
+> To explore data quality and model complexity across different model types required to enable robust energy-saving evaluation.
 
     
 
