@@ -3,7 +3,7 @@ layout: default
 title: Resources
 permalink: /resources/
 ---
-**📌 Next meetings**
+**🗓️ Next meetings**
 * [October BEE meeting](https://www.when2meet.com/?38893664-zwrfd)
     > Please indicate your availability for the all-member meeting in October, especially if you would like to suggest organisation of the meetings!
 
