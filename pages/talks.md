@@ -5,7 +5,7 @@ permalink: /talks/
 
 ---
 ### 2026-12: TBD
-Please contact if interested in the actvitity [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20next%20BEE%20meeting%20.)
+> Please contact if interested in the actvitity [next BEE meeting](mailto:rui.bo@ed.ac.uk?subject=BEE%20Meeting%20Enquiry&body=Please%20send%20the%20link%20for%20the%20next%20BEE%20meeting%20.)
 
 ### 2026-11: Neighbourhood-Scale Retrofit Simulation: An EPC-based analysis
 
